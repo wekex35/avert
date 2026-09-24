@@ -3,6 +3,7 @@ name: Build
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
     branches: [main]
 
@@ -10,12 +11,16 @@ concurrency:
   group: build-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
-  # Compile check — no Apple identity required on the runner.
   build:
     name: Build (unsigned)
     runs-on: macos-15
     timeout-minutes: 30
+    outputs:
+      version: ${{ steps.version.outputs.version }}
 
     steps:
       - name: Checkout
@@ -42,17 +47,34 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build
 
-      - name: Confirm app product
+      - name: Confirm app + version
+        id: version
         run: |
+          set -euo pipefail
           APP="$RUNNER_TEMP/DerivedData/Build/Products/Release/Avert.app"
           test -d "$APP"
-          /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist"
+          VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist")
+          BUILD=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Contents/Info.plist")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "build=$BUILD" >> "$GITHUB_OUTPUT"
+          echo "Avert $VERSION ($BUILD)"
 
-  # Signed archive when repository secrets are present (see docs/SIGNING.md).
+      - name: Zip unsigned app
+        run: |
+          set -euo pipefail
+          APP="$RUNNER_TEMP/DerivedData/Build/Products/Release/Avert.app"
+          ditto -c -k --keepParent "$APP" "$RUNNER_TEMP/Avert-unsigned-macos.zip"
+
+      - name: Upload unsigned zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: Avert-unsigned-macos
+          path: ${{ runner.temp }}/Avert-unsigned-macos.zip
+
   sign:
-    name: Sign (Developer ID)
+    name: Sign
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
     runs-on: macos-15
     timeout-minutes: 45
     env:
@@ -92,9 +114,7 @@ jobs:
           security import "$CERT_PATH" -P "$APPLE_P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
           security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
           security list-keychain -d user -s "$KEYCHAIN" login.keychain-db
-          echo "Imported identities:"
           security find-identity -v -p codesigning "$KEYCHAIN"
-          # Prefer Developer ID; fall back to Apple Distribution / Development.
           IDENTITY=$(security find-identity -v -p codesigning "$KEYCHAIN" | sed -n 's/.*"\(Developer ID Application:[^"]*\)".*/\1/p' | head -1)
           if [[ -z "$IDENTITY" ]]; then
             IDENTITY=$(security find-identity -v -p codesigning "$KEYCHAIN" | sed -n 's/.*"\(Apple Distribution:[^"]*\)".*/\1/p' | head -1)
@@ -109,11 +129,8 @@ jobs:
           if [[ "$IDENTITY" == Developer\ ID\ Application:* ]]; then
             echo "EXPORT_METHOD=developer-id" >> "$GITHUB_ENV"
             echo "CAN_NOTARIZE=true" >> "$GITHUB_ENV"
-          elif [[ "$IDENTITY" == Apple\ Distribution:* ]]; then
-            echo "EXPORT_METHOD=mac-application" >> "$GITHUB_ENV"
-            echo "CAN_NOTARIZE=false" >> "$GITHUB_ENV"
           else
-            echo "EXPORT_METHOD=development" >> "$GITHUB_ENV"
+            echo "EXPORT_METHOD=archive-only" >> "$GITHUB_ENV"
             echo "CAN_NOTARIZE=false" >> "$GITHUB_ENV"
           fi
 
@@ -147,7 +164,6 @@ jobs:
             CODE_SIGN_IDENTITY="$CODE_SIGN_IDENTITY_NAME" \
             ENABLE_HARDENED_RUNTIME=YES
 
-          # Developer ID export when available; otherwise keep the .xcarchive as the artifact.
           if [[ "$EXPORT_METHOD" == "developer-id" ]]; then
             cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
@@ -170,13 +186,10 @@ jobs:
               -exportPath "$EXPORT" \
               -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist"
           else
-            echo "No Developer ID cert in p12 — uploading xcarchive (Distribution/Development only)."
+            echo "No Developer ID cert — packaging xcarchive."
             cp -R "$ARCHIVE" "$EXPORT/Avert.xcarchive"
           fi
-
-          ls -la "$EXPORT"
           echo "EXPORT_PATH=$EXPORT" >> "$GITHUB_ENV"
-          echo "ARCHIVE_PATH=$ARCHIVE" >> "$GITHUB_ENV"
 
       - name: Notarize (Developer ID only)
         if: ${{ env.APPLE_P12_BASE64 != '' && env.APPLE_API_KEY_BASE64 != '' && env.CAN_NOTARIZE == 'true' }}
@@ -192,12 +205,75 @@ jobs:
             --issuer "$APPLE_API_ISSUER_ID" \
             --wait
           xcrun stapler staple "$APP"
-          echo "Notarized: $APP"
 
-      - name: Upload signed app
+      - name: Zip signed output
+        if: ${{ env.APPLE_P12_BASE64 != '' && env.EXPORT_PATH != '' }}
+        run: |
+          set -euo pipefail
+          ditto -c -k --keepParent "$EXPORT_PATH" "$RUNNER_TEMP/Avert-signed-macos.zip"
+
+      - name: Upload signed zip
         if: ${{ env.APPLE_P12_BASE64 != '' }}
         uses: actions/upload-artifact@v4
         with:
           name: Avert-signed-macos
-          path: ${{ env.EXPORT_PATH }}
+          path: ${{ runner.temp }}/Avert-signed-macos.zip
           if-no-files-found: warn
+
+  # Publishes to the repo Releases page (not just Actions artifacts).
+  release:
+    name: GitHub Release
+    needs: [build, sign]
+    if: |
+      always() &&
+      github.event_name == 'push' &&
+      (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) &&
+      needs.build.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download unsigned zip
+        uses: actions/download-artifact@v4
+        with:
+          name: Avert-unsigned-macos
+          path: dist
+
+      - name: Download signed zip (optional)
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: Avert-signed-macos
+          path: dist
+
+      - name: Prepare release files
+        id: prep
+        run: |
+          set -euo pipefail
+          ls -la dist
+          VERSION="${{ needs.build.outputs.version }}"
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            TAG="${GITHUB_REF_NAME}"
+            NAME="Avert ${TAG}"
+            PRERELEASE=false
+          else
+            TAG="v${VERSION}+${{ github.run_number }}"
+            NAME="Avert ${VERSION} (build ${{ github.run_number }})"
+            PRERELEASE=true
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.prep.outputs.tag }}
+          name: ${{ steps.prep.outputs.name }}
+          prerelease: ${{ steps.prep.outputs.prerelease }}
+          generate_release_notes: true
+          files: |
+            dist/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

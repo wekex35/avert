@@ -32,7 +32,11 @@ Repo → **Settings → Secrets and variables → Actions** → add:
 | `APPLE_API_KEY_BASE64` | `base64 -i certs/AuthKey_….p8 \| pbcopy` |
 
 The **Build (unsigned)** job always runs.  
-The **Sign (Developer ID)** job runs on `main` only when `APPLE_P12_BASE64` is set.
+The **Sign** job runs on `main` / `v*` tags when `APPLE_P12_BASE64` is set.  
+The **GitHub Release** job publishes zips to the repo **Releases** page (Actions artifacts alone do not).
+
+- Push to `main` → prerelease `v1.0.0+<run>` with downloads  
+- Tag `git tag v1.0.0 && git push --tags` → full release for that version  
 
 ## Local `certs/` note
 
