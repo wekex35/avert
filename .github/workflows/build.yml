@@ -271,19 +271,17 @@ jobs:
           set -euo pipefail
           ls -la dist
           VERSION="${{ needs.build.outputs.version }}"
+          # Full releases (not prerelease) so the repo sidebar shows "Latest"
+          # like other apps (e.g. KIMS 1.0.1+2 (dev)).
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             TAG="${GITHUB_REF_NAME}"
-            NAME="Avert ${TAG}"
-            PRERELEASE=false
+            NAME="Avert ${TAG#v}"
           else
             TAG="v${VERSION}+${{ github.run_number }}"
-            NAME="Avert ${VERSION} (build ${{ github.run_number }})"
-            PRERELEASE=true
+            NAME="Avert ${VERSION}+${{ github.run_number }} (dev)"
           fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "name=$NAME" >> "$GITHUB_OUTPUT"
-          echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
-          # Prefer dmg as primary; keep zip too
           find dist -type f \( -name '*.dmg' -o -name '*.zip' \) | sort
 
       - name: Create GitHub Release
@@ -291,7 +289,8 @@ jobs:
         with:
           tag_name: ${{ steps.prep.outputs.tag }}
           name: ${{ steps.prep.outputs.name }}
-          prerelease: ${{ steps.prep.outputs.prerelease }}
+          prerelease: false
+          make_latest: true
           generate_release_notes: true
           files: |
             dist/*.zip

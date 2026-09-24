@@ -34,8 +34,8 @@ Repo → **Settings → Secrets and variables → Actions**:
 | **Sign** | `main` / `v*` when `APPLE_P12_BASE64` is set |
 | **GitHub Release** | Push to `main` or tag `v*` — attaches zip + dmg to **Releases** |
 
-- Push to `main` → prerelease `v1.0.0+<run>`  
-- `git tag v1.0.0 && git push --tags` → full release  
+- Push to `main` → release `Avert 1.0.0+<run> (dev)` (shown as **Latest** in the sidebar)  
+- `git tag v1.0.0 && git push --tags` → tagged release  
 
 Notarized outside-App-Store builds need a **Developer ID Application** identity in the `.p12`. Development/Distribution alone can archive on CI but cannot notarize for Gatekeeper.
 
