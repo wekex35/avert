@@ -1,49 +1,43 @@
 # Signing & CI
 
-Local folder `certs/` holds Apple signing material for Avert CI/release.  
-**It must never be committed** (see `.gitignore`).
+Local folder `certs/` holds Apple signing material. **Never commit it** (see `.gitignore`).
 
-## What’s typically in `certs/`
+## Local material (keep private)
 
 | File | Role |
 |------|------|
-| `Certificates.p12` | Exported signing identity (private key + cert) |
-| `creds` | Password for the `.p12` (local only) |
-| `AuthKey_….p8` | App Store Connect API key (notarization / ASC) |
-| `development.cer` / `distribution.cer` | Public certs (optional if inside the `.p12`) |
-| `*.mobileprovision` | **iOS/Mac App Store profiles** — only useful if it matches `com.avert.app` |
+| `Certificates.p12` | Signing identity (private key + cert) |
+| Password file for the `.p12` | Local only — never commit |
+| `AuthKey_….p8` | App Store Connect API key (notarization) |
+| Mac provisioning profiles | Only if they match `com.avert.app` |
 
-A profile named like `Japa_App_Store` is almost certainly for **another app**. Avert (`com.avert.app`) needs either:
+Profiles for other apps are useless here. For public downloads you need a **Developer ID Application** cert + notarization. For Mac App Store, use a matching Mac distribution profile.
 
-- **Developer ID Application** (direct download + notarize), or  
-- **Mac App Store** distribution cert + matching Mac provisioning profile  
+## GitHub Actions secrets
 
-## Wire GitHub Actions (signed job)
-
-Repo → **Settings → Secrets and variables → Actions** → add:
+Repo → **Settings → Secrets and variables → Actions**:
 
 | Secret | Value |
 |--------|--------|
 | `APPLE_P12_BASE64` | `base64 -i certs/Certificates.p12 \| pbcopy` |
-| `APPLE_P12_PASSWORD` | contents of `certs/creds` |
-| `APPLE_TEAM_ID` | 10-character Team ID |
-| `APPLE_API_KEY_ID` | key id from filename (`AuthKey_XXXX.p8` → `XXXX`) |
-| `APPLE_API_ISSUER_ID` | issuer UUID from App Store Connect → Users and Access → Keys |
+| `APPLE_P12_PASSWORD` | `.p12` password |
+| `APPLE_TEAM_ID` | Your 10-character Team ID |
+| `APPLE_API_KEY_ID` | Key id from `AuthKey_<ID>.p8` |
+| `APPLE_API_ISSUER_ID` | Issuer UUID from App Store Connect |
 | `APPLE_API_KEY_BASE64` | `base64 -i certs/AuthKey_….p8 \| pbcopy` |
 
-The **Build (unsigned)** job always runs.  
-The **Sign** job runs on `main` / `v*` tags when `APPLE_P12_BASE64` is set.  
-The **GitHub Release** job publishes zips to the repo **Releases** page (Actions artifacts alone do not).
+## What CI publishes
 
-- Push to `main` → prerelease `v1.0.0+<run>` with downloads  
-- Tag `git tag v1.0.0 && git push --tags` → full release for that version  
+| Job | When |
+|-----|------|
+| **Build (unsigned)** | Always — `.app` zip + `.dmg` |
+| **Sign** | `main` / `v*` when `APPLE_P12_BASE64` is set |
+| **GitHub Release** | Push to `main` or tag `v*` — attaches zip + dmg to **Releases** |
 
-## Local `certs/` note
+- Push to `main` → prerelease `v1.0.0+<run>`  
+- `git tag v1.0.0 && git push --tags` → full release  
 
-Current `Certificates.p12` contains **Apple Development** / **Apple Distribution** (team `9YCF9S8W2Y`).  
-That is enough to **archive** on CI. **Notarized outside-App-Store builds** need a **Developer ID Application** cert added to the same `.p12` (or a new export).
-
-`Japa_App_Store.mobileprovision` is for another app — not used by Avert.
+Notarized outside-App-Store builds need a **Developer ID Application** identity in the `.p12`. Development/Distribution alone can archive on CI but cannot notarize for Gatekeeper.
 
 ```bash
 open Avert.xcodeproj
@@ -51,4 +45,4 @@ open Avert.xcodeproj
 # Product → Archive → Distribute App → Developer ID → Notarize
 ```
 
-Or: `./scripts/export-app.sh` (unsigned CI-style). For signed local export use Xcode Organizer.
+Or unsigned local export: `./scripts/export-app.sh` then `./scripts/make-dmg.sh dist/Avert.app`.

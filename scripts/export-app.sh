@@ -27,6 +27,9 @@ if [[ ! -d "$PRODUCT" ]]; then
 fi
 
 cp -R "$PRODUCT" "$DIST/${APP_NAME}.app"
+chmod +x "$ROOT/scripts/make-dmg.sh"
+"$ROOT/scripts/make-dmg.sh" "$DIST/${APP_NAME}.app" "$DIST/${APP_NAME}.dmg"
 echo "Exported → $DIST/${APP_NAME}.app"
+echo "DMG      → $DIST/${APP_NAME}.dmg"
 echo "Open with: open \"$DIST/${APP_NAME}.app\""
-echo "For distribution: sign + notarize with your Developer ID (see docs/APP_STORE.md)."
+echo "For distribution: sign + notarize with your Developer ID (see docs/SIGNING.md)."
