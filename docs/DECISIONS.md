@@ -6,7 +6,8 @@ Record lasting choices here. Prefer short entries: date, decision, why.
 
 ### 2026-09-24 — Separate repo from DiskViper
 
-Avert is its own product under `~/Programs/peekguard` (repo folder may still use the old path). DiskViper remains storage intelligence only.
+Avert app sources live in `Avert/`; docs and scripts stay at the repo root.
+
 
 ### 2026-09-24 — Product name: Avert
 

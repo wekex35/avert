@@ -32,13 +32,14 @@ private struct MenuBarLabel: View {
     @Bindable var model: AppModel
 
     var body: some View {
-        Image("BrandLogo")
-            .resizable()
-            .renderingMode(.original)
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 18, height: 18)
+        Image(systemName: symbol)
             .accessibilityLabel(accessibilityTitle)
             .help(accessibilityTitle)
+    }
+
+    private var symbol: String {
+        if model.isPanicBlurActive { return "eye.trianglebadge.exclamationmark" }
+        return model.isEnabled ? "eye.slash" : "eye"
     }
 
     private var accessibilityTitle: String {

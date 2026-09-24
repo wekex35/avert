@@ -1,0 +1,53 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  macOS:
+    name: Avert macOS
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+
+      - name: Show tools
+        run: |
+          xcodebuild -version
+          swift --version
+          ls -la Avert Avert.xcodeproj
+
+      - name: Resolve schemes
+        run: xcodebuild -list -project Avert.xcodeproj
+
+      - name: Build (Release)
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project Avert.xcodeproj \
+            -scheme Avert \
+            -configuration Release \
+            -destination 'platform=macOS,arch=arm64' \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Confirm app product
+        run: |
+          APP="$RUNNER_TEMP/DerivedData/Build/Products/Release/Avert.app"
+          test -d "$APP"
+          ls -la "$APP/Contents/MacOS"
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist"
