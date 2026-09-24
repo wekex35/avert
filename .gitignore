@@ -3,3 +3,13 @@ dist/
 xcuserdata/
 *.xcuserstate
 .DS_Store
+
+# Never commit signing material
+certs/
+*.p12
+*.p8
+*.cer
+*.certSigningRequest
+*.mobileprovision
+*.provisionprofile
+.certs
