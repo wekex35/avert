@@ -346,6 +346,21 @@ section {
   color: var(--cyan);
 }
 
+.ph-badge {
+  margin: 1.5rem 0 0;
+}
+
+.ph-badge a {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.ph-badge img {
+  width: 250px;
+  height: auto;
+  border-radius: 8px;
+}
+
 /* —— Footer —— */
 .site-footer {
   padding: 2.5rem 0 3rem;

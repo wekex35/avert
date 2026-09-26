@@ -67,7 +67,7 @@ Site: https://wekex35.github.io/avert/
    - `docs/screenshots/03-exercise-look-down.png`
    - `docs/screenshots/04-privacy.png`
    - `docs/screenshots/01-menu-bar.png`
-3. Video: `docs/demo/avert-demo.mp4`
+3. Video: https://www.youtube.com/watch?v=5TTqezT9OFw (`docs/demo/avert-demo.mp4`)
 
 ## First comment (maker)
 
