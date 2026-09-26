@@ -253,6 +253,7 @@ section {
 
 .split__visual img {
   width: 100%;
+  height: auto;
   border-radius: 0;
   box-shadow: 0 0 0 1px var(--line), 0 30px 80px rgba(0, 0, 0, 0.45);
 }
@@ -291,7 +292,7 @@ section {
 .gallery__rail {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(260px, 320px);
+  grid-auto-columns: minmax(420px, 520px);
   gap: 1rem;
   overflow-x: auto;
   padding: 0.25rem 0 1rem;
@@ -302,7 +303,16 @@ section {
 .gallery__rail img {
   scroll-snap-align: start;
   width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  object-fit: contain;
   box-shadow: 0 0 0 1px var(--line);
+}
+
+.gallery__rail img.gallery__menu {
+  width: auto;
+  max-width: 280px;
+  justify-self: start;
 }
 
 .gallery__hint {
