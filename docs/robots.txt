@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://wekex35.github.io/avert/sitemap.xml
