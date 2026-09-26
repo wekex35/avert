@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Avert — Privacy for your screen. Care for your neck.</title>
+  <meta name="description" content="Mac menu bar app that soft-blurs your screen when you look away using AirPods head motion — no camera. Includes guided neck exercises." />
+  <meta property="og:title" content="Avert" />
+  <meta property="og:description" content="Privacy for your screen. Care for your neck. AirPods head tracking — no camera." />
+  <meta property="og:image" content="https://wekex35.github.io/avert/brand/og_image.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://wekex35.github.io/avert/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://wekex35.github.io/avert/brand/og_image.png" />
+  <link rel="icon" href="brand/avert-logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;550;650;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__media" aria-hidden="true">
+      <img src="brand/og_image.png" alt="" width="1774" height="887" />
+      <div class="hero__shade"></div>
+    </div>
+    <div class="wrap hero__content">
+      <div class="brand">
+        <img src="brand/avert-logo.png" alt="" width="64" height="64" />
+        <p class="brand__name">Avert</p>
+      </div>
+      <h1>Privacy for your screen. Care for your neck.</h1>
+      <p class="hero__lede">
+        Soft-blurs your Mac when you look away — using AirPods head motion, not a camera.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn--primary" href="https://github.com/wekex35/avert/releases/download/v1.0.0-notarized/Avert-1.0.0-macos-notarized.dmg">
+          Download for Mac
+        </a>
+        <a class="btn btn--ghost" href="#demo">Watch demo</a>
+        <p class="cta-note">macOS 14+ · Notarized · Free · No account</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="privacy-blur">
+      <div class="wrap split">
+        <div class="split__copy">
+          <p class="section-kicker">Screen privacy</p>
+          <h2 class="section-title">Look away. That side soft-blurs.</h2>
+          <p class="section-copy">
+            In a café or open office, Avert veils the side of the screen you’re exposing.
+            Look back to center and it clears. Panic cover anytime with ⌘⇧B.
+          </p>
+          <ul class="points">
+            <li>AirPods head tracking — no camera</li>
+            <li>Optional look-down dim and look-up cover</li>
+            <li>Everything stays on your Mac</li>
+          </ul>
+        </div>
+        <div class="split__visual">
+          <img src="screenshots/04-privacy.png" alt="Avert Privacy settings" width="720" height="520" loading="lazy" />
+        </div>
+      </div>
+    </section>
+
+    <section id="neck">
+      <div class="wrap split split--flip">
+        <div class="split__copy">
+          <p class="section-kicker">Neck care</p>
+          <h2 class="section-title">Guided stretches that follow your head.</h2>
+          <p class="section-copy">
+            Same AirPods sensors power a short exercise set — look down/up, tilt, turn —
+            with on-screen coaching and an optional voice count.
+          </p>
+          <ul class="points">
+            <li>Stillness and posture reminders</li>
+            <li>3-move guided set</li>
+            <li>Wellness helper — not medical advice</li>
+          </ul>
+        </div>
+        <div class="split__visual">
+          <img src="screenshots/03-exercise-look-down.png" alt="Avert neck exercise: look down" width="720" height="520" loading="lazy" />
+        </div>
+      </div>
+    </section>
+
+    <section class="gallery" id="gallery" aria-labelledby="gallery-title">
+      <div class="wrap">
+        <p class="section-kicker">Inside the app</p>
+        <h2 class="section-title" id="gallery-title">Menu bar. Status. Schedule.</h2>
+        <p class="section-copy">Avert lives quietly in your menu bar until you need it.</p>
+        <div class="gallery__rail" tabindex="0">
+          <img src="screenshots/01-menu-bar.png" alt="Menu bar" width="320" height="400" loading="lazy" />
+          <img src="screenshots/02-status.png" alt="Status" width="320" height="400" loading="lazy" />
+          <img src="screenshots/05-neck-care.png" alt="Neck care settings" width="320" height="400" loading="lazy" />
+          <img src="screenshots/06-schedule.png" alt="Schedule" width="320" height="400" loading="lazy" />
+          <img src="screenshots/07-general.png" alt="General settings" width="320" height="400" loading="lazy" />
+        </div>
+        <p class="gallery__hint">Scroll sideways for more</p>
+      </div>
+    </section>
+
+    <section id="demo">
+      <div class="wrap">
+        <p class="section-kicker">Demo</p>
+        <h2 class="section-title">See it in about a minute.</h2>
+        <p class="section-copy" style="margin-bottom: 1.5rem;">
+          Status, calibrate, neck care, privacy, general.
+        </p>
+        <video controls playsinline preload="metadata" poster="brand/og_image.png" style="width:100%; box-shadow: 0 0 0 1px var(--line);">
+          <source src="demo/avert-demo.mp4" type="video/mp4" />
+          Your browser doesn’t play MP4. <a href="demo/avert-demo.mp4">Download the demo</a>.
+        </video>
+      </div>
+    </section>
+
+    <section class="download" id="download">
+      <div class="wrap">
+        <p class="section-kicker">Get Avert</p>
+        <h2 class="section-title">Download the notarized Mac build</h2>
+        <ul class="req">
+          <li>Mac on macOS 14 Sonoma or later</li>
+          <li>AirPods (or compatible Beats) with head motion</li>
+          <li>Allow Motion &amp; Fitness when asked</li>
+        </ul>
+        <div class="cta-row">
+          <a class="btn btn--primary" href="https://github.com/wekex35/avert/releases/download/v1.0.0-notarized/Avert-1.0.0-macos-notarized.dmg">
+            Download Avert 1.0.0
+          </a>
+          <a class="btn btn--ghost" href="https://github.com/wekex35/avert">Source on GitHub</a>
+        </div>
+        <p class="cta-note">Apple-notarized Developer ID build — opens without Gatekeeper malware warnings.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <nav aria-label="Footer">
+        <a href="privacy.html">Privacy</a>
+        <a href="https://github.com/wekex35/avert/releases/tag/v1.0.0-notarized">Releases</a>
+        <a href="https://github.com/wekex35/avert">GitHub</a>
+      </nav>
+      <p>Avert · On-device only · No camera · Not medical advice</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy — Avert</title>
+  <meta name="description" content="Avert privacy policy: on-device AirPods motion only. No camera, no account, no uploads." />
+  <link rel="icon" href="brand/avert-logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;550;650;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <div class="wrap page">
+    <p><a href="index.html">← Avert</a></p>
+    <h1>Privacy</h1>
+    <p class="meta">Effective: 2026-09-24 · Product: Avert (<code>com.avert.app</code>)</p>
+
+    <h2>Summary</h2>
+    <p>
+      Avert is a macOS menu-bar utility that uses <strong>on-device AirPods (headphone) motion</strong>
+      to soft-blur your screen when you look away. It does <strong>not</strong> use a camera,
+      does <strong>not</strong> create an account, and does <strong>not</strong> upload head-pose
+      or screen content to any server.
+    </p>
+
+    <h2>Data Avert uses</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Where it stays</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>AirPods attitude / motion samples</td>
+          <td>On this Mac only (in memory while running)</td>
+          <td>Relative look-away / look-down / look-up detection</td>
+        </tr>
+        <tr>
+          <td>Calibration center</td>
+          <td>On this Mac (in memory; calibrated flag in UserDefaults)</td>
+          <td>Define “facing the screen”</td>
+        </tr>
+        <tr>
+          <td>Settings</td>
+          <td>UserDefaults on this Mac</td>
+          <td>Remember preferences</td>
+        </tr>
+        <tr>
+          <td>Optional panic cover image</td>
+          <td>~/Library/Application Support/Avert/</td>
+          <td>Custom full-screen cover</td>
+        </tr>
+        <tr>
+          <td>Exercise completion timestamp</td>
+          <td>UserDefaults</td>
+          <td>Show “last completed” locally</td>
+        </tr>
+        <tr>
+          <td>Notification permission</td>
+          <td>System</td>
+          <td>Neck break / exercise reminders</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Avert does <strong>not</strong> collect analytics, crash reports to a third party,
+      advertising IDs, or contact information.
+    </p>
+
+    <h2>Permissions</h2>
+    <ul>
+      <li><strong>Motion &amp; Fitness</strong> — required for headphone motion</li>
+      <li><strong>Bluetooth</strong> — optional reclaim of AirPods after a phone call</li>
+      <li><strong>Notifications</strong> — optional wellness / exercise reminders</li>
+      <li><strong>User-selected files</strong> — only if you choose a custom panic image</li>
+      <li><strong>Login Item</strong> — only if you enable Launch at login</li>
+    </ul>
+    <p>No Camera, Screen Recording, or Accessibility permissions are required for V1 privacy blur.</p>
+
+    <h2>What we claim</h2>
+    <p>
+      Avert is <strong>shoulder-surf reduction</strong>, not absolute privacy.
+      Neck care and guided exercises are <strong>wellness helpers</strong>, not medical advice.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      Questions: open an issue on
+      <a href="https://github.com/wekex35/avert/issues">github.com/wekex35/avert</a>.
+    </p>
+  </div>
+</body>
+</html>

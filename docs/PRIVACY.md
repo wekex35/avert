@@ -38,4 +38,6 @@ Neck care and guided exercises are **wellness helpers**, not medical advice.
 
 ## Contact
 
-For privacy questions about this build, contact the developer shipping this copy of Avert. Publish a public URL here before Mac App Store submission.
+Public policy: https://wekex35.github.io/avert/privacy.html  
+
+Questions: open an issue on https://github.com/wekex35/avert/issues

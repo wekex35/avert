@@ -4,6 +4,8 @@
 
 # Avert
 
+**Site:** [wekex35.github.io/avert](https://wekex35.github.io/avert/) · **Download:** [notarized DMG](https://github.com/wekex35/avert/releases/download/v1.0.0-notarized/Avert-1.0.0-macos-notarized.dmg)
+
 Avert lives in your Mac menu bar and soft-blurs your screen when you look away — so people beside you see less of what’s on it. It uses your AirPods’ head motion, not a camera.
 
 ---
@@ -151,7 +153,7 @@ Open Avert from the menu. Use the sidebar:
 
 Avert uses AirPods motion on your Mac only. It does not use a camera, does not read other apps’ content, and does not send your head pose or screen to a server.
 
-Full details: [docs/PRIVACY.md](docs/PRIVACY.md).
+Full details: [Privacy policy](https://wekex35.github.io/avert/privacy.html) · [docs/PRIVACY.md](docs/PRIVACY.md).
 
 ---
 
